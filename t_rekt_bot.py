@@ -44,9 +44,9 @@ def run_user_search(r: Reddit, comments_replied_to):
 
 
     #Finds the most recently posted comment
-    newest_comment = r.redditor(search_user).comments.new(limit=1)
+    newest_comment = r.redditor(search_user).comments.new(limit=1).next()
     new_message_time_utc = newest_comment.created_utc
-    print(f'THe most recent comment was {newest_comment.body!r}')
+    print(f'The most recent comment was {newest_comment.body!r}')
 
     # # looks at new comments made by user to a limited amount
     # for comment in r.redditor(search_user).comments.new(limit=1):
