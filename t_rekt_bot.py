@@ -86,7 +86,8 @@ def serve_iastate(r: Reddit):
     """
 
     # keywords we are looking for in new comments
-    keywords = ['!helser', '!goose', '!butler', '!why', '!t-rekt-commands']
+    keywords = ['!helser', '!goose', '!butler', '!why', '!t-rekt-commands',
+                '!fth']
 
     time_started_utc = time.time()
     print(f'I started my session on: '
@@ -117,6 +118,8 @@ def serve_iastate(r: Reddit):
                 new_comment.reply(commands.WHY)
             elif command is '!t-rekt-commands':
                 new_comment.reply(commands.COMMANDS)
+            elif command is '!fth':
+                new_comment.reply(commands.FTH)
 
             if 'good bot' in new_comment.body.lower() and \
                     new_comment.parent.author \

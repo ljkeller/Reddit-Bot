@@ -93,3 +93,5 @@ In the future: I want more /r/iastate features, and maybe to tell (random) jokes
 Also, I'm built with Praw, the Reddit API for python 2.7-3.6. If you have suggestions for the bot, DM me or /u/Tyrannosaurus-Rekt. """
 
 COMMANDS = """In my current state, I have the !helser, !goose, !butler, !why, and !t-rekt-commands commands. Just saying any of these in a comment on r/iastate will activate me!"""
+
+FTH = """Fuck the Hawks!"""
