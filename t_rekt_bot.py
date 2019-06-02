@@ -5,7 +5,6 @@ import os
 import search
 import commands
 import config
-import prawcore
 
 
 def bot_login():
@@ -94,16 +93,15 @@ def serve_iastate(r: Reddit):
     print(f'I started my session on: '
           f'{time.asctime(time.localtime(time_started_utc))}')
 
-    for newest_comment in r.subreddit('iastate').comments(limit=1):
+    for newest_comment in r.subreddit('test').comments(limit=1):
         body = newest_comment.body
         newest_comment_utc = newest_comment.created_utc
         print(f'The newest comment was"{body}" at a time '
               f'{time.asctime(time.localtime(newest_comment_utc))}'
               f' by {newest_comment.author.name}')
 
-
-    #Stream new comments in, look through them for commands
-    for new_comment in r.subreddit('iastate').stream.comments():
+    # Stream new comments in, look through them for commands
+    for new_comment in r.subreddit('test').stream.comments():
         if new_comment.created_utc > time_started_utc and \
                 'T-Rekt-Bot' not in new_comment.author.name:
             print(f'New comment "{new_comment.body}" at '
@@ -111,45 +109,9 @@ def serve_iastate(r: Reddit):
                   f'by {new_comment.author.name}')
             command = search.search_keywords(keywords,
                                              new_comment.body.lower())
-
-
-            try:
-                if command is '!helser':
-                    new_comment.reply(commands.HELSER)
-                elif command is '!goose' or command is '!geese':
-                    new_comment.reply(commands.GOOSE)
-                elif command is '!butler':
-                    new_comment.reply(commands.BUTLER)
-                elif command is '!why':
-                    new_comment.reply(commands.WHY)
-                elif command is '!t-rekt-commands':
-                    new_comment.reply(commands.COMMANDS)
-                elif command is '!fth':
-                    new_comment.reply(commands.FTH)
-
-                if 'good bot' in new_comment.body.lower() and \
-                        'T-Rekt-Bot' in new_comment.parent().author.name:
-                    new_comment.reply(":D Thanks so much! ")
-                    print('Somebody said I was a good bot!')
-            except praw.exceptions.RateLimitExceeded:
-                time.sleep(601)
-                if command is '!helser':
-                    new_comment.reply(commands.HELSER)
-                elif command is '!goose' or command is '!geese':
-                    new_comment.reply(commands.GOOSE)
-                elif command is '!butler':
-                    new_comment.reply(commands.BUTLER)
-                elif command is '!why':
-                    new_comment.reply(commands.WHY)
-                elif command is '!t-rekt-commands':
-                    new_comment.reply(commands.COMMANDS)
-                elif command is '!fth':
-                    new_comment.reply(commands.FTH)
-
-                if 'good bot' in new_comment.body.lower() and \
-                        'T-Rekt-Bot' in new_comment.parent.author.name:
-                    new_comment.reply(":D Thanks so much! ")
-                    print('Somebody said I was a good bot!')
+            if command or 'good bot' in new_comment.body.lower() and \
+                    new_comment.parent().author.name:
+                respond_comment(new_comment, command, 3)
 
 
 def get_saved_comments():
@@ -169,6 +131,58 @@ def get_saved_comments():
             comments_replied_to = filter(None, comments_replied_to)
 
     return comments_replied_to
+
+
+def respond_comment(comment, command, attempts):
+    """
+    A function used to respond to user comments containing a command! Will run
+    an 'attemps' amount of time before it stops executing
+    :param comment: Given comment containing a command to be responded to
+    :param command: Given command that needs response/action
+    :param attemps: Number of attemps bot will try responding before giving up
+    """
+    response = ''
+
+    if 'good bot' in comment.body.lower():
+        print(f'{comment.author.name} said I was a good bot!')
+        response = "I'm so happy you think I'm a good bot, " \
+                   "" + comment.author.name + "!\n\n"
+
+    if command == '!helser':
+        response += commands.HELSER
+    elif command == '!goose' or command is '!geese':
+        response += commands.GOOSE
+    elif command == '!butler':
+        response += commands.BUTLER
+    elif command == '!why':
+        response += commands.WHY
+    elif command == '!t-rekt-commands':
+        response += commands.COMMANDS
+    elif command == '!fth':
+        response += commands.FTH
+
+    while attempts > 0:
+        # if successful we want to return, otherwise we have error messages
+        try:
+            comment.reply(response)
+            print(f'I responded to the comment {comment.body} with command '
+                  f'{command}')
+            return
+        # Allows bot to exit on ^c
+        except KeyboardInterrupt:
+            break
+        except Exception as e:
+            # Avoiding the RateLimitExceeded exception. Usually have to wait
+            # 600 seconds
+            print(f'I just experienced {e.with_traceback()}')
+            print("I have to sleep for 5 minutes")
+            time.sleep(301)
+            respond_comment(comment, command, attempts - 1)
+
+    print(f'I failed to respond to command {command!r} in comment'
+          f'{comment.body!r} by {comment.author.name!r}')
+    return
+
 
 # Looks for certain user and goes through their comments
 r = bot_login()
