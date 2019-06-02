@@ -5,6 +5,7 @@ import os
 import search
 import commands
 import config
+import prawcore
 
 
 def bot_login():
@@ -96,37 +97,59 @@ def serve_iastate(r: Reddit):
     for newest_comment in r.subreddit('iastate').comments(limit=1):
         body = newest_comment.body
         newest_comment_utc = newest_comment.created_utc
-        print(f'The newest comment was "{body}" at a time '
-              f'{time.asctime(time.localtime(newest_comment_utc))}')
+        print(f'The newest comment was"{body}" at a time '
+              f'{time.asctime(time.localtime(newest_comment_utc))}'
+              f' by {newest_comment.author.name}')
 
-    # Stream new comments in, look through them for commands
+
+    #Stream new comments in, look through them for commands
     for new_comment in r.subreddit('iastate').stream.comments():
-        if new_comment.created_utc > time_started_utc and new_comment.author \
-                is not r.user.me():
+        if new_comment.created_utc > time_started_utc and \
+                'T-Rekt-Bot' not in new_comment.author.name:
             print(f'New comment "{new_comment.body}" at '
-                  f'{time.asctime(time.localtime(new_comment.created_utc))}')
+                  f'{time.asctime(time.localtime(new_comment.created_utc))}'
+                  f'by {new_comment.author.name}')
             command = search.search_keywords(keywords,
                                              new_comment.body.lower())
 
-            if command is '!helser':
-                new_comment.reply(commands.HELSER)
-            elif command is '!goose' or command is '!geese':
-                new_comment.reply(commands.GOOSE)
-            elif command is '!butler':
-                new_comment.reply(commands.BUTLER)
-            elif command is '!why':
-                new_comment.reply(commands.WHY)
-            elif command is '!t-rekt-commands':
-                new_comment.reply(commands.COMMANDS)
-            elif command is '!fth':
-                new_comment.reply(commands.FTH)
 
-            if 'good bot' in new_comment.body.lower() and \
-                    new_comment.parent.author \
-                    is \
-                    r.user.me():
-                new_comment.reply(":D Thanks so much! ")
-                print('Somebody said I was a good bot!')
+            try:
+                if command is '!helser':
+                    new_comment.reply(commands.HELSER)
+                elif command is '!goose' or command is '!geese':
+                    new_comment.reply(commands.GOOSE)
+                elif command is '!butler':
+                    new_comment.reply(commands.BUTLER)
+                elif command is '!why':
+                    new_comment.reply(commands.WHY)
+                elif command is '!t-rekt-commands':
+                    new_comment.reply(commands.COMMANDS)
+                elif command is '!fth':
+                    new_comment.reply(commands.FTH)
+
+                if 'good bot' in new_comment.body.lower() and \
+                        'T-Rekt-Bot' in new_comment.parent().author.name:
+                    new_comment.reply(":D Thanks so much! ")
+                    print('Somebody said I was a good bot!')
+            except praw.exceptions.RateLimitExceeded:
+                time.sleep(601)
+                if command is '!helser':
+                    new_comment.reply(commands.HELSER)
+                elif command is '!goose' or command is '!geese':
+                    new_comment.reply(commands.GOOSE)
+                elif command is '!butler':
+                    new_comment.reply(commands.BUTLER)
+                elif command is '!why':
+                    new_comment.reply(commands.WHY)
+                elif command is '!t-rekt-commands':
+                    new_comment.reply(commands.COMMANDS)
+                elif command is '!fth':
+                    new_comment.reply(commands.FTH)
+
+                if 'good bot' in new_comment.body.lower() and \
+                        'T-Rekt-Bot' in new_comment.parent.author.name:
+                    new_comment.reply(":D Thanks so much! ")
+                    print('Somebody said I was a good bot!')
 
 
 def get_saved_comments():
@@ -146,7 +169,6 @@ def get_saved_comments():
             comments_replied_to = filter(None, comments_replied_to)
 
     return comments_replied_to
-
 
 # Looks for certain user and goes through their comments
 r = bot_login()

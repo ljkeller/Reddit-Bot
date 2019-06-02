@@ -52,10 +52,10 @@ While geese are *pure evil*, the Richardson Ct goose is just a momma goose being
 
 """
 
-BUTLER = """**Steve Butler?** *Careful, hes a hero*
+BUTLER = """**Steve Butler?** *Careful, he's a hero*
 
 For the uninitiated: Also known as /u/puleshan,
-Steve Butler is an Associate Professor and the Barbara J. Janson Professor in the department of mathmatics at Iowa State University. He is Teaching Math 165 and Math 265 in Fall 2019.
+Steve Butler is an Associate Professor and the Barbara J. Janson Professor in the department of mathematics at Iowa State University. He is Teaching Math 165 and Math 265 in Fall 2019.
 
 &nbsp; 
 
@@ -92,6 +92,6 @@ In the future: I want more /r/iastate features, and maybe to tell (random) jokes
 
 Also, I'm built with Praw, the Reddit API for python 2.7-3.6. If you have suggestions for the bot, DM me or /u/Tyrannosaurus-Rekt. """
 
-COMMANDS = """In my current state, I have the !helser, !goose, !butler, !why, and !t-rekt-commands commands. Just saying any of these in a comment on r/iastate will activate me!"""
+COMMANDS = """In my current state, I have the !helser, !goose, !fth, !butler, !why, and !t-rekt-commands commands. Just saying any of these in a comment on r/iastate will activate me!"""
 
 FTH = """Fuck the Hawks!"""
