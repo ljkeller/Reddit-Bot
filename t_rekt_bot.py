@@ -93,7 +93,7 @@ def serve_iastate(r: Reddit):
     print(f'I started my session on: '
           f'{time.asctime(time.localtime(time_started_utc))}')
 
-    for newest_comment in r.subreddit('test').comments(limit=1):
+    for newest_comment in r.subreddit('iastate').comments(limit=1):
         body = newest_comment.body
         newest_comment_utc = newest_comment.created_utc
         print(f'The newest comment was"{body}" at a time '
@@ -101,7 +101,7 @@ def serve_iastate(r: Reddit):
               f' by {newest_comment.author.name}')
 
     # Stream new comments in, look through them for commands
-    for new_comment in r.subreddit('test').stream.comments():
+    for new_comment in r.subreddit('iastate').stream.comments():
         if new_comment.created_utc > time_started_utc and \
                 'T-Rekt-Bot' not in new_comment.author.name:
             print(f'New comment "{new_comment.body}" at '
