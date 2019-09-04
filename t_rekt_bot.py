@@ -1,3 +1,9 @@
+'''
+ Currently, this bot only operates within /r/iastate. If I wanted to follow 
+ a user arnd, I would set comments_replied_to = get_saved_comments() and 
+ throw that parameter in run_user_search.
+'''
+=======
 import praw
 from praw import Reddit
 import time
@@ -5,7 +11,9 @@ import os
 import search
 import commands
 import config
+import smtp_services
 
+smtp = smtp_services.init_email()
 
 def bot_login():
     """
@@ -174,6 +182,7 @@ def respond_comment(comment, command, attempts):
         except Exception as e:
             # Avoiding the RateLimitExceeded exception. Usually have to wait
             # 600 seconds
+            smtp_services.send_email(smtp, "Exception Occured", Exception)
             print(f'I just experienced {e.with_traceback()}')
             print("I have to sleep for 5 minutes")
             time.sleep(301)
@@ -188,6 +197,8 @@ def respond_comment(comment, command, attempts):
 r = bot_login()
 
 serve_iastate(r)
+smtp_services.send_email(smtp, f"Bot Turned Off {time.localtime()}",
+                         "It looks like the bot was just disabled")
 
 '''
  Currently, this bot only operates within /r/iastate. If I wanted to follow 
